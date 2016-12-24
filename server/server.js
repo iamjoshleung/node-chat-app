@@ -19,6 +19,18 @@ io.on('connection', (socket) => {
     console.log('disconnected to the client')
   })
 
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat room',
+    createdAt: new Date().getTime()
+  })
+
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined',
+    createdAt: new Date().getTime()
+  })
+
   socket.on('createMessage', (data) => {
     console.log('New email created', data)
     io.emit('newMessage', {

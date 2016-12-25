@@ -24,9 +24,10 @@ io.on('connection', (socket) => {
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
 
-  socket.on('createMessage', (data) => {
+  socket.on('createMessage', (data, callback) => {
     console.log('New email created', data)
     io.emit('newMessage', generateMessage(data.from, data.text))
+    callback('I have acknowledged this.')
   })
 })
 

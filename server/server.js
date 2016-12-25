@@ -6,7 +6,7 @@ const socketIO = require('socket.io')
 const app = express()
 const server = http.createServer(app)
 let io = socketIO(server)
-let {generateMessage} = require('./utils/message')
+let {generateMessage, generateLocationMessage} = require('./utils/message')
 
 const publicPath = path.join(__dirname, '../public')
 const port = process.env.PORT || 3000
@@ -28,6 +28,10 @@ io.on('connection', (socket) => {
     console.log('New email created', data)
     io.emit('newMessage', generateMessage(data.from, data.text))
     callback('I have acknowledged this.')
+  })
+
+  socket.on('createLocationMessage', (data) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', data.latitude, data.longitude))
   })
 })
 

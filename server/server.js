@@ -6,6 +6,7 @@ const socketIO = require('socket.io')
 const app = express()
 const server = http.createServer(app)
 let io = socketIO(server)
+let {generateMessage} = require('./utils/message')
 
 const publicPath = path.join(__dirname, '../public')
 const port = process.env.PORT || 3000
@@ -19,25 +20,13 @@ io.on('connection', (socket) => {
     console.log('disconnected to the client')
   })
 
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat room',
-    createdAt: new Date().getTime()
-  })
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat room'))
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  })
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
 
   socket.on('createMessage', (data) => {
     console.log('New email created', data)
-    io.emit('newMessage', {
-      from: data.from,
-      text: data.text,
-      createdAt: new Date().getTime()
-    })
+    io.emit('newMessage', generateMessage(data.from, data.text))
   })
 })
 

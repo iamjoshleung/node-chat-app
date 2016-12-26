@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
   socket.on('createMessage', (data, callback) => {
     console.log('New email created', data)
     io.emit('newMessage', generateMessage(data.from, data.text))
-    callback('I have acknowledged this.')
+    callback()
   })
 
   socket.on('createLocationMessage', (data) => {

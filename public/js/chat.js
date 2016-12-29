@@ -1,4 +1,5 @@
 var socket = io()
+var params
 
 function scrollToBottom() {
   // selectors
@@ -20,6 +21,17 @@ function scrollToBottom() {
 
 socket.on('connect', function () {
   console.log('connected to the server')
+
+  params = jQuery.deparam(window.location.search)
+
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err)
+      window.location.href = '/'
+    } else {
+      console.log('no err')
+    }
+  })
 })
 
 socket.on('disconnect', function () {
@@ -52,13 +64,22 @@ socket.on('newLocationMessage', function (data) {
   scrollToBottom()
 })
 
+socket.on('updateUserList', function (users) {
+  var ol = jQuery('<ol></ol')
+
+  users.forEach(function (user) {
+    ol.append(jQuery('<li></li>').text(user))
+  })
+
+  jQuery('#users').html(ol)
+})
+
 jQuery('#message-form').on('submit', function (e) {
   e.preventDefault()
 
   var messageTextBox = jQuery('[name=message]')
 
   socket.emit('createMessage', {
-    from: 'Josh',
     text: messageTextBox.val()
   }, (data) => {
     messageTextBox.val('')
